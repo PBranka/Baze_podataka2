@@ -1,9 +1,12 @@
-# Baze_podataka2
+﻿# Baze_podataka2
 
 Projekat "Bioskop" razvijen od strane sljedećih studenata:
-
-#dodati clanove grupe.
+~ Rada Banjac
+~ Mihaela Galić
+~ Dragana Miladić
+~ Branka Petković
 
 #dodati plan razvoja projekta (okvirne datume za build-ove), zakljucno sa planiranim datumom odbrane projekta 
 
-#dodati alate koji ce se koristit u projektovanju baze, izrade aplikacije isl. 
+Alati korišćeni u izradi projekta:
+~ TerraER
