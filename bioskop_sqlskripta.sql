@@ -52,8 +52,8 @@ ENGINE = InnoDB;
 
 
 CREATE TABLE IF NOT EXISTS `bioskop`.`komentar` (
-  `datum` DATE NULL,
-  `tekst` LONGTEXT NULL,
+  `datum` DATETIME  NOT NULL DEFAULT current_timestamp,
+  `tekst` LONGTEXT NOT NULL,
   `korisnik_korisnickoIme` VARCHAR(30) NOT NULL,
   `film_sifraFilma` INT NOT NULL,
   PRIMARY KEY (`datum`, `korisnik_korisnickoIme`, `film_sifraFilma`),
@@ -186,3 +186,104 @@ CREATE TABLE IF NOT EXISTS `bioskop`.`rezervisi` (
 ENGINE = InnoDB;
 
 
+-- CHECK u obliku okidaca za provjeru godine i trajanja filma:
+DELIMITER $$
+CREATE TRIGGER film_check BEFORE INSERT ON `bioskop`.`film`
+	FOR EACH ROW
+    BEGIN
+    IF (NEW.godina<=1900 OR NEW.godina>YEAR(CURRENT_DATE)) THEN 
+		 SIGNAL SQLSTATE '45000'
+         SET MESSAGE_TEXT='Godina filma nije validna!';
+	END IF;
+    IF (NEW.trajanje<=30) THEN 
+		 SIGNAL SQLSTATE '45000'
+         SET MESSAGE_TEXT='Greska: Film je kraci od 30 minuta!';
+         ELSEIF (NEW.trajanje>=180) THEN
+         SIGNAL SQLSTATE '45000'
+         SET MESSAGE_TEXT='Greska: Film je duzi od 180 minuta!';
+	END IF;
+	END$$
+    DELIMITER ;
+    
+-- TRIGGER koji prilikom ocjenjivanja filma mijenja prosjecnu ocjenu filma i broj korisnika:
+DELIMITER $$
+CREATE TRIGGER film_ocjena BEFORE UPDATE ON `bioskop`.`film`
+	FOR EACH ROW
+    BEGIN 
+    IF (OLD.ocjena = 0) THEN SET NEW.brojKorisnika=1;
+    ELSE
+    SET NEW.ocjena=((OLD.ocjena * OLD.brojKorisnika) + NEW.ocjena)/(OLD.brojKorisnika + 1), NEW.brojKorisnika=OLD.brojKorisnika + 1;
+    END IF;
+	END$$
+    DELIMITER ;
+    
+-- Indeksi za pretragu:
+ALTER TABLE `bioskop`.`film` ADD INDEX USING HASH (`avatar`);
+
+ALTER TABLE `bioskop`.`film` ADD INDEX USING BTREE (`naziv`);
+
+ALTER TABLE `bioskop`.`film` ADD INDEX USING BTREE (`zanr`);
+
+-- CHECK u obliku okidaca za promjenu termina filma:
+DELIMITER $$
+CREATE TRIGGER prikazivanje BEFORE INSERT ON `bioskop`.`prikazi`
+FOR EACH ROW 
+BEGIN
+DECLARE mali,veliki TIME;
+DECLARE malitrajanje, temp, novitrajanje INT; 
+
+IF(SECOND(NEW.termin) <> '00') THEN   -- Unos sekundi u terminu filma je blokiran
+		 SIGNAL SQLSTATE '45000'
+         SET MESSAGE_TEXT='Greska: Nije potrebno unositi sekunde!';
+		END IF;
+
+IF(NEW.termin NOT BETWEEN '16:00:00' AND '23:00:00') THEN -- Dozvoljeni su samo termini izmedju 16:00 i 23:00
+	     SIGNAL SQLSTATE '45000'
+         SET MESSAGE_TEXT='Greska: Termin filma nije validan!';
+		END IF;
+
+SET novitrajanje=(SELECT trajanje FROM film WHERE sifraFilma=NEW.odobreni_film_sifraFilma); -- trajanje novog filma kojeg unosimo u tabelu prikazi
+SET temp=HOUR(NEW.termin)*60+MINUTE(NEW.termin); -- termin filma koji unosimo u bazu u INT (racunamo u kojem minutu dana pocinje film)
+SELECT MAX(termin) INTO mali FROM prikazi WHERE sala_idSale=NEW.sala_idSale AND datumPrikazivanja=NEW.datumPrikazivanja AND termin<NEW.termin; -- termin filma koji je prije termina novog,koji je u istoj sali istog datuma 
+SELECT MIN(termin) INTO veliki FROM prikazi WHERE sala_idSale=NEW.sala_idSale AND datumPrikazivanja=NEW.datumPrikazivanja AND termin>NEW.termin; -- termin filma koji je poslije termina novog
+IF(mali IS NOT NULL) THEN
+	SET malitrajanje=(SELECT trajanje FROM film WHERE sifraFilma IN (SELECT odobreni_film_sifraFilma FROM prikazi WHERE sala_idSale=NEW.sala_idSale AND datumPrikazivanja=NEW.datumPrikazivanja AND termin = mali)); -- trajanje filma koji je prije novog
+	IF ((HOUR(mali)*60+MINUTE(mali)+malitrajanje+15) > temp) THEN
+					SIGNAL SQLSTATE '45000' 
+                    SET MESSAGE_TEXT='Temin ulazi u termin prikazivanja drugog filma!';
+	END IF;
+END IF;
+IF(veliki IS NOT NULL) THEN
+					IF((temp+novitrajanje+15) > (HOUR(veliki)*60+MINUTE(veliki))) THEN
+                    	SIGNAL SQLSTATE '45000' 
+                        SET MESSAGE_TEXT='Temin ulazi u termin prikazivanja drugog filma!';
+                    END IF;
+END IF;
+END$$
+DELIMITER ;
+
+-- EVENT za brisanje filma cije prikazivanje je isteklo:
+/* SET GLOBAL EVENT_SCHEDULER="ON";
+CREATE EVENT `DatumPrikazivanja` ON SCHEDULE EVERY 1 DAY STARTS '2020-_-_00:00:00' ON 
+COMPLETION PRESERVE ENABLE
+DO DELETE FROM `bioskop`.`prikazi` WHERE datumPrikazivanja > CURRENT_DATE; */
+
+-- KOD ZA VALIDACIJU EMAIL-a
+/*DELIMITER $$
+CREATE TRIGGER validan_email BEFORE INSERT ON `bioskop`.`korisnik`
+FOR EACH ROW
+BEGIN   
+IF (NEW.mail NOT LIKE '%[^a-z,0-9,@,.,!,#,$,%%,&,'',*,+,--,/,=,?,^,_,`,{,|,},~]%' 
+        AND NEW.mail LIKE '%_@_%_.__%'
+        AND NEW.mail NOT LIKE '%@%@%'  
+        AND NEW.mail NOT LIKE '%..%'
+        AND NEW.mail NOT LIKE '.%'
+        AND NEW.mail NOT LIKE '%.')
+THEN SET NEW.mail=NEW.mail;
+        ELSE
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT='Greska: Mail nije validan!';
+    END IF;
+    END$$
+    DELIMITER ;*/  
+    
