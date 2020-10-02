@@ -29,7 +29,7 @@ if ($Rezultat = mysqli_query ($con, $sql))
                
                if ($korisnickoIme <> "")
                {
-                   $sql = "SELECT * FROM administrator WHERE korisnik_korisnickoIme = '$korisnickoIme'";
+                   $sql = "SELECT * FROM administrator WHERE BINARY korisnik_korisnickoIme = '$korisnickoIme'";
                    $temp = "0";
 
                    if ($rez = mysqli_query ($con, $sql))
