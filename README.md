@@ -6,7 +6,9 @@ Projekat "Bioskop" razvijen od strane sljedećih studenata:
 ~ Dragana Miladić
 ~ Branka Petković
 
-#dodati plan razvoja projekta (okvirne datume za build-ove), zakljucno sa planiranim datumom odbrane projekta 
-
 Alati korišćeni u izradi projekta:
+~ Visual Paradigm
 ~ TerraER
+~ MySQL Workbench
+~ XAMPP
+~ Visual Studio Code
