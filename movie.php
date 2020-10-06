@@ -115,7 +115,7 @@ if (isset ($_POST['datumPrikazivanja']))
 // Ukoliko kriticar brise prikazivanje.
 if (isset ($_GET['datumPrikazivanja']))
 {
-$sql = "DELETE from prikazi WHERE datumPrikazivanja = '{$_GET['datumPrikazivanja']}' and termin = '{$_GET['termin']}' and odobreni_film_sifraFilma = {$sifraFilma} and sala_idSale = {$idSale}";
+    $sql = "DELETE from prikazi WHERE datumPrikazivanja = '{$_GET['datumPrikazivanja']}' and termin = '{$_GET['termin']}' and odobreni_film_sifraFilma = {$sifraFilma} and sala_idSale = {$_GET['idSale']}";
     mysqli_query ($con, $sql);
 }
 
