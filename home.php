@@ -66,10 +66,10 @@
         ?>
 
         <!-- Kontejner za sve na nasoj pocetnoj strani. vh = view height -->
-         <div class = "container-fluid text-white" style = "background-color: #004d40; height: 100vh;">
+        <div class = "container-fluid text-white" style = "background-color: #004d40; height: 100vh;">
 
             <!-- Gornja traka. -->
-            <nav class = "navbar navbar-expand-sm fixed-top" style = "background-color: #fff8e1; border: 1.5px solid #1de9b6; box-shadow: 0px 16px 14px -6px rgba(0,0,0,.5); height: 75px; overflow: auto;">
+            <nav class = "navbar navbar-expand-sm fixed-top" style = "background-color: #fff8e1; border: 1.5px solid #1de9b6; box-shadow: 0px 16px 14px -6px rgba(0,0,0,.5);">
             
                 <a class = "navbar-brand text-warning" href = "#"> 
                     Bioskop
@@ -102,7 +102,7 @@
     
                     <li class = "nav-item dropdown" style = "background-color: #004d40; border:0.5px solid #1de9b6;">
                         <a class = "nav-link dropdown-toggle text-white" href = "#" id = "navbardrop" data-toggle = "dropdown"> Žanr </a>
-                             <div class = "dropdown-menu shadow-lg" style = "background-color: #004d40;  border:1px solid #1de9b6;">
+                             <div class = "dropdown-menu shadow-lg" style = "background-color: #004d40;  border:1px solid #1de9b6;" style = "overflow: auto;">
                                 <a class = "dropdown-item text-warning" href = "?zanr=Akcija<?php require ('username.php'); ?>"> Akcija </a>
                                 <a class = "dropdown-item text-warning" href = "?zanr=Animacija<?php require ('username.php'); ?>"> Animacija </a>
                                 <a class = "dropdown-item text-warning" href = "?zanr=Avantura<?php require ('username.php'); ?>"> Avantura </a>
@@ -232,7 +232,7 @@
                 
             </div>
 
-        </div> <!-- Zatvaramo zeleni kontejner. -->
+        </div> <!-- Zatvaramo zeleni kontejner. --> 
 
     </body>
 </html>
