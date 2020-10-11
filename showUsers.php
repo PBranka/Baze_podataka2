@@ -56,19 +56,19 @@
                 <br>
         
                 <div class = "table-responsive">
-                    <table class = "table-striped" style = "text-align:center; background-color: #fff8e1; border: 1.5px solid #1de9b6; box-shadow: 0px 16px 14px -6px rgba(0,0,0,.5);">
+                    <table class = "table-striped" style = "background-color: #fff8e1; border: 1.5px solid #1de9b6; box-shadow: 0px 16px 14px -6px rgba(0,0,0,.5);">
 
                         <thead class = "thead text-white" style = "background-color: #004d40;">
                             <tr>
-                                <th> Korisničko ime </th>
-                                <th> Šifra korisnika </th>
-                                <th> E-mail </th>
-                                <th> Ime </th>
-                                <th> Prezime </th>
-                                <th> Datum rođenja </th>
-                                <th> Brisanje </th>
-                                <th> Admin </th>
-                                <th> Kritičar </th>
+                                <td> Korisničko ime </td>
+                                <td> Šifra korisnika </td>
+                                <td> E-mail </td>
+                                <td> Ime </td>
+                                <td> Prezime </td>
+                                <td> Datum rođenja </td>
+                                <td> Brisanje </td>
+                                <td> Admin </td>
+                                <td> Kritičar </td>
                             </tr>
                         </thead>
 
@@ -101,7 +101,7 @@
 
                                     <form action = "<?php print 'showUsers.php?korisnickoIme='.$_GET['korisnickoIme']; ?>" method = "POST">
                                         <td>
-                                            <button class = "btn" name = "obrisiKorisnika" value = <?php print $vrsta[0]; ?> > <i class="fa fa-trash"></i> </button>
+                                            <button class = "btn" name = "obrisiKorisnika" value = "<?php print $vrsta[0]; ?>" > <i class="fa fa-trash"></i> </button>
                                         </td>
                                     </form>
 
@@ -117,20 +117,25 @@
 
                                     <form action = "<?php print 'showUsers.php?korisnickoIme='.$_GET['korisnickoIme']; ?>" method = "POST">
                                         <td>
-                                            <button type = "submit" class = "btn btn-success" name = "ukloniAdmina" value = <?php print $vrsta[0].' '; 
-                                                                                                                                  if ($vrsta[0] == $_GET['korisnickoIme']) print 'disabled'; ?> > Ukloni </button>
+                                            <button type = "submit" class = "btn btn-success" name = "ukloniAdmina" value = "<?php print $vrsta[0]; ?>" 
+                                                                                                                             <?php if ($vrsta[0] == $_GET['korisnickoIme']) print 'disabled'; ?>> 
+                                                Ukloni
+                                            </button>
                                         </td>
                                     </form>
 
                                     <?php
                                 }
-                                else // Dugme za dodavanje administratora.
+                                else // Dugme za dodavanje administratora (ako korisnik nije kriticar, inace je blokirano).
                                 {
                                     ?>
 
                                     <form action = "<?php print 'showUsers.php?korisnickoIme='.$_GET['korisnickoIme']; ?>" method = "POST">
                                         <td>
-                                            <button type = "submit" class = "btn btn-warning" name = "postaviAdmina" value = <?php print $vrsta[0]; ?>> Postavi </button>
+                                            <button type = "submit" class = "btn btn-warning" name = "postaviAdmina" value = "<?php print $vrsta[0]; ?>"
+                                                                                                                              <?php if ($kriticar == 1) print 'disabled'; ?>>
+                                                Postavi 
+                                            </button>
                                         </td>
                                     </form>
 
@@ -144,7 +149,7 @@
 
                                     <form action = "<?php print 'showUsers.php?korisnickoIme='.$_GET['korisnickoIme']; ?>" method = "POST">
                                         <td>
-                                            <button type = "submit" class = "btn btn-success" name = "ukloniKriticara" value = <?php print $vrsta[0]; ?>> Ukloni </button>
+                                            <button type = "submit" class = "btn btn-success" name = "ukloniKriticara" value = "<?php print $vrsta[0]; ?>"> Ukloni </button>
                                         </td>
                                     </form>
 
@@ -156,7 +161,10 @@
 
                                     <form action = "<?php print 'showUsers.php?korisnickoIme='.$_GET['korisnickoIme']; ?>" method = "POST">
                                         <td>
-                                            <button type = "submit" class = "btn btn-warning" name = "postaviKriticara" value = <?php print $vrsta[0]; ?>> Postavi </button>
+                                            <button type = "submit" class = "btn btn-warning" name = "postaviKriticara" value = "<?php print $vrsta[0]; ?>"
+                                                                                                                                 <?php if ($admin == 1) print 'disabled'; ?>>
+                                                Postavi 
+                                            </button>
                                         </td>
                                     </form>
 
