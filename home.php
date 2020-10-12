@@ -41,7 +41,7 @@
         
         if (isset($_POST['sifraKorisnika']) && !isset($_POST['ime'])) // Ne radi se o registraciji, vec prijavi.
         {
-            $sql = "SELECT korisnickoIme FROM korisnik WHERE sifraKorisnika = '{$_POST['sifraKorisnika']}' AND 
+            $sql = "SELECT korisnickoIme FROM korisnik WHERE BINARY sifraKorisnika = '{$_POST['sifraKorisnika']}' AND 
                    (BINARY korisnickoIme = '{$_POST['pomocna']}' OR BINARY mail = '{$_POST['pomocna']}')";
 
             if ($rezultat = mysqli_query ($con, $sql))
